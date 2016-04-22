@@ -38,6 +38,21 @@ object MyModule {
     go(0, 0, as.length - 1)
   }
 
+  def isSorted[A](as: Array[A], gt: (A, A) => Boolean): Boolean = {
+    @annotation.tailrec
+    def go(i: Int): Boolean =
+      if (i == as.length) true
+      else {
+        val current = as(i)
+        val previous = as(i-1)
+        val greater = gt(previous, current)
+        if (greater) false
+        else go(i + 1)
+      }
+
+    go(1)
+  }
+
   private def formatResult(name: String, n: Int, f: Int => Int) = {
     val msg = "The %s of %d is %d"
     msg.format(name, n, f(n))
