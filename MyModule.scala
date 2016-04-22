@@ -31,4 +31,5 @@ object MyModule {
     println(formatResult("absolute value", -42, abs))
     println(formatResult("factorial", 5, factorial))
     println(formatResult("fibonacci value", 4, fibonacci))
+    println(formatResult("incremented value", 10, x => x + 1))
 }
