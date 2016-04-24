@@ -53,6 +53,20 @@ object MyModule {
     go(1)
   }
 
+  def partiall[A, B, C](a: A, f: (A, B) => C): B => C = {
+    f(a: A, _: B)
+  }
+
+  def curry[A, B, C](f: (A, B) => C): A => (B => C) = {
+    (a: A) => {
+      (b: B) => f(a, b)
+    }
+  }
+
+  def uncurry[A, B, C](f: A => B => C): (A, B) => C = {
+    (a: A, b: B) => f(a)(b)
+  }
+
   private def formatResult(name: String, n: Int, f: Int => Int) = {
     val msg = "The %s of %d is %d"
     msg.format(name, n, f(n))
