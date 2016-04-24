@@ -67,6 +67,12 @@ object MyModule {
     (a: A, b: B) => f(a)(b)
   }
 
+  def compose[A, B, C](f: B => C, g: A => B): A => C = {
+    (a: A) => {
+      f(g(a))
+    }
+  }
+
   private def formatResult(name: String, n: Int, f: Int => Int) = {
     val msg = "The %s of %d is %d"
     msg.format(name, n, f(n))
