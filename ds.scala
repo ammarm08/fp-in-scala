@@ -30,15 +30,31 @@ object DS {
   }
 
   def sum(ints: List[Int]): Int = {
-    foldRight(ints, 0)(_ + _)
+    foldLeft(ints, 0)(_ + _)
   }
 
   def product(doubles: List[Double]): Double = {
-    foldRight(doubles, 1.0)(_ * _)
+    if (doubles.length == 0) 0
+    else foldLeft(doubles, 1.0)(_ * _)
   }
 
+  def length[A](l: List[A]): Int = {
+    foldLeft(l, 0)((y, _) => y + 1)
+  }
+
+  // not TCO-ed, will stackoverflow for large lists
   def foldRight[A, B](l: List[A], acc: B)(f: (A, B) => B): B = l match {
     case Nil => acc
     case h :: t => f(h, foldRight(t, acc)(f))
+  }
+
+  // tail-call optimized
+  def foldLeft[A,B](l: List[A], z: B)(f: (B, A) => B): B = {
+    @annotation.tailrec
+    def go(as: List[A], acc: B): B = as match {
+      case Nil => acc
+      case h :: t => go(t, f(acc, h))
+    }
+    go(l, z)
   }
 }
