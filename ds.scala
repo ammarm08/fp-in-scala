@@ -19,9 +19,12 @@ object DS {
     case h :: t => x :: t
   }
 
-  def append[A](l1: List[A], l2: List[A]): List[A] = l1 match {
-    case Nil => l2
-    case h :: t => h :: append(t, l2)
+  def append[A](l1: List[A], l2: List[A]): List[A] = {
+    foldRight(l1, l2)((h, acc) => h :: acc)
+  }
+
+  def flatten[A](lists: List[List[A]]): List[A] = {
+    foldRight(lists, List.empty[A])(append)
   }
 
   def init[A](l: List[A]): List[A] = l match {
@@ -39,7 +42,14 @@ object DS {
   }
 
   def length[A](l: List[A]): Int = {
-    foldLeft(l, 0)((y, _) => y + 1)
+    foldLeft(l, 0)((acc, _) => acc + 1)
+  }
+
+  def reverse[A](l: List[A]): List[A] = {
+    def go(as: List[A], acc: List[A]): List[A] = {
+      foldLeft(l, acc)((x, y) => y :: x)
+    }
+    go(l, Nil)
   }
 
   // not TCO-ed, will stackoverflow for large lists
