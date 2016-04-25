@@ -88,6 +88,12 @@ object DS {
     case (_, h :: t) => h :: take(t, n - 1)
   }
 
+  def hasSubsequence[A](l: List[A], sub: List[A]): Boolean = (l) match {
+    case Nil => false
+    case h :: t if (take(t, sub.length) == sub) => true
+    case h :: t => hasSubsequence(t, sub)
+  }
+
   // not TCO-ed, will stackoverflow for large lists
   def foldRight[A, B](l: List[A], acc: B)(f: (A, B) => B): B = l match {
     case Nil => acc
