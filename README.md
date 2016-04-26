@@ -1,0 +1,1 @@
+Exercises from Chiusana & Bjarnason's Functional Programming in Scala
