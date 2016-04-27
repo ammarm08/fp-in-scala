@@ -50,6 +50,74 @@ object Stream {
     case None => z
   }
 
+  // infinite stream
+  // lazy val tail --> an infinitely extended Cons-ing of `a` onto previous tail
+  def constant[A](a: A): Stream[A] = {
+    lazy val tail: Stream[A] = Cons(() => a, () => tail)
+    tail
+  }
+
+  // infinite stream counting up by one. `cons` -> new stream of head n and tail from(n+1)
+  def from(n: Int): Stream[Int] = {
+    cons(n, from(n+1))
+  }
+
+  // infinite fibonacci stream
+  val fibs = {
+    def go(p: Int, q: Int): Stream[Int] =
+      cons(p, go(q, p+q))
+    go(0, 1)
+  }
+
+  // f(z) takes type S and transforms it to Option[(A, S)]
+  // "cotermination", "corecursion", "guarded recursion"
+  def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] =  f(z) match {
+    case Some((h, s)) => cons(h, unfold(s)(f))
+    case None => empty
+  }
+
+  // execute `z` func, then execs `f` via pattern match.
+  val fibsUnfold = unfold((0,1)) {
+    case (p, q) => Some((p, (q, p+q)))
+  }
+
+  def fromUnfold(n: Int) = {
+    unfold(n)(n => Some((n, n+1))
+  }
+
+  def constantUnfold[A](a: A) = {
+    unfold(a)(_ => Some((a, a)))
+  }
+
+  def mapUnfold[B](f: A => B): Stream[B] = {
+    unfold(this) {
+      case Cons(h, t) => Some(f(h()), t())
+      case _ => None
+    }
+  }
+
+  def takeUnfold[A](n: Int): Stream[A] = {
+    unfold((this, n)) {
+      case (Cons(h,t), 1) => Some((h(), (empty, 0)))
+      case (Cons(h,t), n) => Some((h(), (t(), n-1)))
+      case _ => None
+    }
+  }
+
+  def takeWhileUnfold[A](f: A => Boolean): Stream[A] = {
+    unfold(this) {
+      case Cons(h, t) if f(h()) => Some((h(), t()))
+      case _ => None
+    }
+  }
+
+
+  // def hasSubsequence[A](l: List[A], sub: List[A]): Boolean = (l) match {
+  //   case Nil => false
+  //   case h :: t if (take(t, sub.length) == sub) => true
+  //   case h :: t => hasSubsequence(t, sub)
+  // }
+
   // lazy evaluation
   // if None -> false right away, no other evaluation
   // else -> predicate check head, or if not valid, check rest of tail
