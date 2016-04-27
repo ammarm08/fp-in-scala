@@ -111,6 +111,17 @@ object Stream {
     }
   }
 
+  // given two streams and a transform function for the two streams,
+  // return a single 'zipped' stream consisting of the transformed values
+  def zipWithUnfold[B,C](s: Stream[B])(f: (A,B) => C): Stream[C] =
+    unfold((this, s)) {
+      case (Cons(h1, t1), Cons(h2, t2)) => Some( ( f(h1(), h2()), (t1(), t2()) ) )
+      case _ => None
+    }
+
+  // to-do
+  def zipWithAll[B, C](s: Stream[B])(f: (Option[A], Option[B]) => C): Stream[C]
+
 
   // def hasSubsequence[A](l: List[A], sub: List[A]): Boolean = (l) match {
   //   case Nil => false
